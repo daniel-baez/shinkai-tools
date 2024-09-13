@@ -87,14 +87,11 @@ export class Tool extends BaseTool<Config, Params, Result> {
   }
 
   async run(params: Params): Promise<RunResult<Result>> {
-    console.log(`hello world chilean-holidays`);
-
     const year = params.year || new Date().getFullYear();
-
     const url = this.getUrlForYear(year);
 
     return this.withPage(async (page) => {
-      await this.goToPage(page, 'https://feriados.cl/');
+      await this.goToPage(page, url);
 
       const holidays = await this.scrapeHolidays(page, year);
       return {
