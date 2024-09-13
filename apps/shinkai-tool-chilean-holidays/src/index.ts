@@ -72,20 +72,6 @@ export class Tool extends BaseTool<Config, Params, Result> {
     },
   };
 
-  private getUrlForYear(year: number): string {
-    const currentYear = new Date().getFullYear();
-    const nextYear = currentYear + 1;
-    const yearAfterNext = currentYear + 2;
-
-    if (year === currentYear) {
-      return 'https://feriados.cl/';
-    } else if (year === nextYear || year === yearAfterNext) {
-      return `https://feriados.cl/${year}.htm`;
-    } else {
-      throw new Error('Invalid year. Only current year, next year, or year after next are supported.');
-    }
-  }
-
   async run(params: Params): Promise<RunResult<Result>> {
     const year = params.year || new Date().getFullYear();
     const url = this.getUrlForYear(year);
@@ -131,11 +117,11 @@ export class Tool extends BaseTool<Config, Params, Result> {
     return `${months[month]}/${day}/${year}`;
   }
 
-  isMandatory(festivity: string): boolean {
+  private isMandatory(festivity: string): boolean {
     return festivity.toLowerCase().includes('irrenunciable');
   }
 
-  cleanWhitespace(text: string): string {
+  private cleanWhitespace(text: string): string {
     return text.replace(/\s+/g, ' ').trim();
   }
 
@@ -198,5 +184,20 @@ export class Tool extends BaseTool<Config, Params, Result> {
       await page.goto(url, { waitUntil: 'load' });
       await page.waitForFunction(() => document.readyState === 'complete');
   }
+
+  private getUrlForYear(year: number): string {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+    const yearAfterNext = currentYear + 2;
+
+    if (year === currentYear) {
+      return 'https://feriados.cl/';
+    } else if (year === nextYear || year === yearAfterNext) {
+      return `https://feriados.cl/${year}.htm`;
+    } else {
+      throw new Error('Invalid year. Only current year, next year, or year after next are supported.');
+    }
+  }
+
 
 }
