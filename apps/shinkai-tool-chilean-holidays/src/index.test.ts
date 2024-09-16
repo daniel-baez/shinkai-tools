@@ -12,7 +12,7 @@ test('run using top10=false, categoryName=DEXES, networkName=BSC', async () => {
   });
 
   const run_result = await tool.run({
-    year: 2024
+    year: '2024'
   });
 
   console.log('holidays', run_result.data.holidays);
@@ -45,7 +45,7 @@ test('run using top10=false, categoryName=DEXES, networkName=BSC', async () => {
     chromePath: process.env?.CHROME_PATH,
   });
 
-  const result = tool.translateDateToAmericanFormat('Miércoles, 18 de Septiembre', 2024);
+  const result = tool.translateDateToAmericanFormat('Miércoles, 18 de Septiembre', '2024');
 
   expect(result).toBe('09/18/2024');
 }, 10000);

@@ -9,7 +9,7 @@ type Config = {
 };
 
 type Params = {
-  year: number;
+  year: string;
 };
 
 type Holiday = {
@@ -29,7 +29,7 @@ export class Tool extends BaseTool<Config, Params, Result> {
   definition: ToolDefinition<Config, Params, Result> = {
     id: 'shinkai-tool-chilean-holidays',
     name: 'Shinkai: chilean-holidays',
-    description: 'New chilean-holidays fetches chilean holidays in the american date format for the current year',
+    description: 'New chilean-holidays fetches chilean holidays in the american date format for the current and the next two years',
     author: 'Shinkai',
     keywords: ['chilean-holidays', 'shinkai'],
     configurations: {
@@ -45,7 +45,7 @@ export class Tool extends BaseTool<Config, Params, Result> {
     parameters: {
       type: 'object',
       properties: {
-        year: { type: 'number' },
+        year: { type: 'string' },
       },
       required: [],
     },
@@ -73,7 +73,7 @@ export class Tool extends BaseTool<Config, Params, Result> {
   };
 
   async run(params: Params): Promise<RunResult<Result>> {
-    const year = params.year || new Date().getFullYear();
+    const year = params.year || new Date().getFullYear().toString();
     const url = this.getUrlForYear(year);
 
     return this.withPage(async (page) => {
@@ -88,7 +88,7 @@ export class Tool extends BaseTool<Config, Params, Result> {
     });
   }
 
-  translateDateToAmericanFormat(spanishDate: string, year: number): string {
+  translateDateToAmericanFormat(spanishDate: string, year: string): string {
     const months: Record<string, string> = {
       "Enero": "01",
       "Febrero": "02",
@@ -125,7 +125,7 @@ export class Tool extends BaseTool<Config, Params, Result> {
     return text.replace(/\s+/g, ' ').trim();
   }
 
-  private async scrapeHolidays(page: playwright.Page, year: number): Promise<Holiday[]> {
+  private async scrapeHolidays(page: playwright.Page, year: string): Promise<Holiday[]> {
     const rows = await page.evaluate(() => {
       const firstTable = document.querySelector('table');
 
@@ -185,10 +185,10 @@ export class Tool extends BaseTool<Config, Params, Result> {
       await page.waitForFunction(() => document.readyState === 'complete');
   }
 
-  private getUrlForYear(year: number): string {
-    const currentYear = new Date().getFullYear();
-    const nextYear = currentYear + 1;
-    const yearAfterNext = currentYear + 2;
+  private getUrlForYear(year: string): string {
+    const currentYear = new Date().getFullYear().toString();
+    const nextYear = (new Date().getFullYear() + 1).toString();
+    const yearAfterNext = (new Date().getFullYear() + 2).toString();
 
     if (year === currentYear) {
       return 'https://feriados.cl/';
